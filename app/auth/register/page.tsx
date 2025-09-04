@@ -56,12 +56,17 @@ export default function RegisterPage() {
     try {
       const supabase = createClient()
 
+      const redirectUrl =
+        process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
+        (typeof window !== "undefined"
+          ? `${window.location.origin}/auth/success`
+          : "https://your-app.vercel.app/auth/success")
+
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo:
-            process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/auth/success`,
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: `${formData.firstName} ${formData.lastName}`,
             user_type: activeTab,
